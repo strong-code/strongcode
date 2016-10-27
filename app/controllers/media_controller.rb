@@ -1,4 +1,5 @@
 class MediaController < ApplicationController
+  before_action :api_authenticate
 
   def create
     ext       = File.extname(params[:media].original_filename)
