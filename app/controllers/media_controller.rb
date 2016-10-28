@@ -17,7 +17,7 @@ class MediaController < ApplicationController
     types = {
       p: ['.png', '.jpg', '.gif', '.jpeg', '.tiff'],
       v: ['.mpg', '.mp4', '.webm', '.avi', '.mkv', '.gifv', '.m4v'],
-      txt:   ['.txt', '.md', '.rtf', '.doc', '.docx']
+      t:   ['.txt', '.md', '.rtf', '.doc', '.docx']
     }
 
     types.each do |k, v|

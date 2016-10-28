@@ -18,3 +18,6 @@
 
 # Prod ENV loader
 .env.production
+
+# Public media uploads
+public/media/**
