@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
       end
     else
       @user = current_user
+      
+      redirect_to root_path if @user.nil?
     end
   end
 

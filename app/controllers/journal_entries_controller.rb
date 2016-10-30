@@ -1,7 +1,7 @@
 class JournalEntriesController < ApplicationController
   before_action :api_authenticate
 
-  def index  
+  def index
     #@jes = @user.journal_entries
     @jes = JournalEntry.for(params[:date], @user)
     
@@ -20,7 +20,7 @@ class JournalEntriesController < ApplicationController
     if @je.save
       respond_to do |f|
         f.html { redirect_to journal_entries_path }
-        f.json { render json: { success: "true", journal_entry: @je } }
+        f.json { render json: { success: "true", text: @je.text } }
       end
     end
   end

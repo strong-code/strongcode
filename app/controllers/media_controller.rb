@@ -6,7 +6,8 @@ class MediaController < ApplicationController
     filename  = SecureRandom.hex[0..5] + ext
     folder    = get_folder(ext)
     directory = "public/media/#{folder}"
-    path = File.join(directory, filename)
+    path      = File.join(directory, filename)
+    
     File.open(path, 'wb') { |f| f.write(params[:media].read) }
     render text: "http://strongco.de/media/#{folder}/#{filename}\n"
   end
@@ -17,7 +18,7 @@ class MediaController < ApplicationController
     types = {
       p: ['.png', '.jpg', '.gif', '.jpeg', '.tiff'],
       v: ['.mpg', '.mp4', '.webm', '.avi', '.mkv', '.gifv', '.m4v'],
-      t:   ['.txt', '.md', '.rtf', '.doc', '.docx']
+      t: ['.txt', '.md', '.rtf', '.doc', '.docx']
     }
 
     types.each do |k, v|
