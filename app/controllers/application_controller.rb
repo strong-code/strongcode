@@ -4,15 +4,16 @@ class ApplicationController < ActionController::Base
   # protect_from_forgery with: :exception
 
   def api_authenticate
-    if request.format.json?
-      authenticate_or_request_with_http_token do |token, opts|
-        @user = User.where(api_key: token).first
-      end
-    else
-      @user = current_user
-      
-      redirect_to root_path if @user.nil?
-    end
-  end
+    token, options = ActionController::HttpAuthentication::Token.token_and_options(request)
 
+    if token.nil?
+      @user = current_user
+    else
+      authenticate_or_request_with_http_token do |token, opts|
+          @user = User.where(api_key: token).first
+      end
+    end
+    
+    redirect_to root_path if @user.nil?
+  end
 end
