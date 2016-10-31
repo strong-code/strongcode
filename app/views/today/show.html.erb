@@ -1,0 +1,26 @@
+<p>
+  <code>
+    <%= Time.now.strftime('%A, %B %d, %Y') %>
+  </code>
+</p>
+
+<h3>thoughts</h3>
+
+<p>
+  <% @jes.each do |je| %>
+    <code>
+      <%= je.text %>
+    </code>
+    <br>
+  <% end %>
+</p>
+
+<h3>screens</h3>
+
+<p>
+  <% @media.each do |m| %>
+    <a href="<%= m %>">
+      <img src="<%= m %>" height="80" width="100">
+    </href>
+  <% end %>
+</p>
