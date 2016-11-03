@@ -21,6 +21,8 @@
   <% @media.each do |m| %>
     <a href="<%= m %>">
       <img src="<%= m %>" height="80" width="100">
-    </href>
+    </a>
+    <span class="delete-link" data-name="<%= m %>">x</span>
   <% end %>
 </p>
+

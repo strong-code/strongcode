@@ -3,5 +3,5 @@ Rails.application.routes.draw do
   root to: 'home#index'
   get 'today', to: 'today#show'
   resources :journal_entries
-  resource :media, only: [:create]
+  resource :media, only: [:create, :destroy]
 end

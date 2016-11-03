@@ -12,6 +12,10 @@ class MediaController < ApplicationController
     render text: "http://strongco.de/media/#{folder}/#{filename}\n"
   end
 
+  def destroy
+    #
+  end
+
   private
 
   def get_folder(ext)
