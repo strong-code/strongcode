@@ -1,9 +1,11 @@
-<%= link_to 'logout', destroy_user_session_path, :method => :delete, class: 'btn btn-link' %>
-<br>
-Welcome back <%= @user.email %>
-<br>
-<% unless @user.api_key.nil? %>
-  Your API key: <code><%= @user.api_key %></code>
+<% unless current_user.nil? %>
+  <%= link_to 'logout', destroy_user_session_path, :method => :delete, class: 'btn btn-link' %>
   <br>
+    Welcome back <%= @user.email %>
+  <br>
+  <% unless @user.api_key.nil? %>
+    Your API key: <code><%= @user.api_key %></code>
+    <br>
+  <% end %>
+  <%= link_to 'thoughts', journal_entries_path %>
 <% end %>
-<%= link_to 'thoughts', journal_entries_path %>

@@ -1,5 +1,5 @@
 class HealthController < ApplicationController
-  before_filter :set_cache_headers
+  before_filter :set_cache_headers, :api_authenticate
   
   def index
     @body = `echo q | htop -s PERCENT_MEM | aha --line-fix`

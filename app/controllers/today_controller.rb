@@ -1,5 +1,5 @@
 class TodayController < ApplicationController
-
+  before_filter :api_authenticate
   def show
     @media = media_for_today
     @jes = JournalEntry.for_today
