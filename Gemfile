@@ -48,3 +48,4 @@ end
 
 gem 'devise'
 gem 'dotenv-rails', :require => 'dotenv/rails-now'
+gem 'bootstrap-sass', '~> 3.3.6'

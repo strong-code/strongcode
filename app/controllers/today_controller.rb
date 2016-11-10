@@ -3,6 +3,7 @@ class TodayController < ApplicationController
   def show
     @media = media_for_today
     @jes = JournalEntry.for_today
+    @weight = Weight.for_today
   end
 
 
