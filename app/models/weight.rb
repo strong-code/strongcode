@@ -1,8 +1,7 @@
 class Weight < ActiveRecord::Base
 
   def self.for_today
-    today = Date.new
-    Weight.where(date: today).first
+    record = Weight.where(date: Date.today).first
   end
 
 end

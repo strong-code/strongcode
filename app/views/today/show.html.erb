@@ -3,7 +3,9 @@
     <%= Time.now.strftime('%A, %B %d, %Y') %>
   </p>
   <p>
-    <%= @weight.weight %>lb
+    <% unless @weight.nil? %>
+      <%= @weight %>lb
+    <% end %>
   </p>
 </code>
 
