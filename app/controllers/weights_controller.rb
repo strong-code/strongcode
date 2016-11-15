@@ -7,7 +7,6 @@ class WeightsController < ApplicationController
 
   def create
     @weight = Weight.new(weight_params)
-    @weight.date = Date.new
 
     if @weight.save
       flash[:success] = "Weight recorded"
