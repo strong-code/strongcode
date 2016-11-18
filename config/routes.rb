@@ -8,5 +8,5 @@ Rails.application.routes.draw do
   resources :journal_entries
   resource :media, only: [:create, :destroy]
   resources :weights, only: [:new, :create]
-
+  resources :notes, only: [:new, :create]
 end
