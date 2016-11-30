@@ -8,7 +8,7 @@
 
 <% @todo.tasks.each do |task| %>
 <p>
-<%= task.name %>
+<%= task.name %> | <%= link_to 'Edit', edit_todo_task_path(@todo, task) %>
 <br>
 <%= task.item %>
   <% unless task.completed.nil? %>

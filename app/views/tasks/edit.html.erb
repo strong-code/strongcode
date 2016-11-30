@@ -1,0 +1,11 @@
+<p>
+<%= form_for [@todo, @task] do |f| %>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+
+  <%= f.label :item %>
+  <%= f.text_field :item %>
+
+  <%= f.submit :update %>
+<% end %>
+</p>

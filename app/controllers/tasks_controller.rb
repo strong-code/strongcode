@@ -14,8 +14,13 @@ class TasksController < ApplicationController
     end
   end
 
+  def edit
+    @todo = Todo.find(params[:todo_id])
+    @task = Task.find(params[:id])
+  end
+
   def update
-    @task = Task.find(params[:task_id])
+    @task = Task.find(params[:id])
     @task.update_attributes(task_params)
     redirect_to root_url
   end
