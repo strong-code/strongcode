@@ -1,0 +1,18 @@
+<p>
+<%= @todo.title %>
+</p>
+
+<p>
+<%= link_to 'Add task', new_todo_task_path(@todo) %>
+</p>
+
+<% @todo.tasks.each do |task| %>
+<p>
+<%= task.name %>
+<br>
+<%= task.item %>
+  <% unless task.completed.nil? %>
+    <br>
+    <%= task.completed %>
+  <% end %>
+<% end %>

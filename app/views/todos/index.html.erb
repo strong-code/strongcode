@@ -1,0 +1,7 @@
+<% @todos.each do |t| %>
+<p>
+<%= link_to t.title, t %>
+<br>
+<%= t.tags.join(', ') %>
+</p>
+<% end %>

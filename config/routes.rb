@@ -9,4 +9,7 @@ Rails.application.routes.draw do
   resource :media, only: [:create, :destroy]
   resources :weights, only: [:new, :create]
   resources :notes, only: [:new, :create]
+  resources :todos do
+    resources :tasks
+  end
 end
