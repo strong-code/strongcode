@@ -1,20 +1,40 @@
 class NotesController < ApplicationController
 
+  def index
+    @notes = Note.all
+  end
+
+  def show
+    @note = Note.find(params[:id])
+  end
+
   def new
     @note = Note.new
   end
 
   def create
     @note = Note.new(note_params)
+    @note.body = "A new note..."
     @note.tags = note_params[:tags].split(', ')
 
     if @note.save
       flash[:success] = "Note saved"
-      redirect_to root_url
+      redirect_to note_path(@note)
     else
-      flash[:error] = "Erro saving new note"
+      flash[:error] = "Error saving new note"
       render @note
     end
+  end
+
+  def update
+    @note = Note.find(params[:id])
+    @note.update_attributes(note_params)
+    redirect_to note_path(@note)
+  end
+
+  def destroy
+    @note = Note.find(params[:id]).destroy
+    redirect_to notes_path
   end
 
   private

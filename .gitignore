@@ -21,3 +21,6 @@
 
 # Public media uploads
 public/media/**
+
+# Compiled assets
+public/assets/**

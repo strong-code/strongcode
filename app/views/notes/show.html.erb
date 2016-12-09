@@ -1,0 +1,28 @@
+<p>
+  <h3><%= @note.title %></h3>  
+  <%= button_to 'Delete', @note, method: :delete %>
+</p>
+
+<%= form_for @note do |f| %>
+  <%= f.submit :Update %>
+  <p></p>
+  <%= f.label :tags %>
+  <%= f.text_field :tags %>
+  <p><p>
+  <%= f.text_area :body, id: "text-input", oninput: "this.editor.update()", rows: "6", cols: "60" %>
+  <br>
+<% end %>
+
+<div id="preview"> </div>
+<script>
+  function Editor(input, preview) {
+    this.update = function () {
+      preview.innerHTML = markdown.toHTML(input.value);
+    };
+    input.editor = this;
+    this.update();
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  new Editor($("text-input"), $("preview"));
+</script>
