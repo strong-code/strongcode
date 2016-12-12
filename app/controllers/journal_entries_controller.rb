@@ -1,5 +1,4 @@
 class JournalEntriesController < ApplicationController
-  before_action :api_authenticate
 
   def index
     #@jes = @user.journal_entries

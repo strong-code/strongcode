@@ -8,6 +8,7 @@
 </head>
 <body>
   <div id="main-container" class="container-fluid">
+  <% unless current_user.nil? %>
     <span class="header">
       <a href="/today">/today</a>
       <a href="/health">/health</a>
@@ -15,6 +16,7 @@
       <a href="/weights/new">/weight</a>
       <a href="/notes">/notes</a>
     </span>
+  <% end %>
     <%= yield %>
   </div>
 </body>
