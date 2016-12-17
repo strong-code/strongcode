@@ -3,6 +3,6 @@
 </p>
 <% @notes.each do |note| %>
   <p>
-    <%= link_to note.title, note_url(note) %>
+    <%= link_to note.title, note_url(note) %> | <em>updated <%= time_ago_in_words(note.updated_at) %></em>
   </p>
 <% end %>
