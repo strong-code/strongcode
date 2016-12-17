@@ -1,6 +1,6 @@
 <p>
   <h3><%= @note.title %></h3>  
-  <%= button_to 'Delete', @note, method: :delete %>
+  <%= button_to 'Delete', @note, method: :delete, data: {confirm: 'Are you sure?'} %>
 </p>
 
 <%= form_for @note do |f| %>
