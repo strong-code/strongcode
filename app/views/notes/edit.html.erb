@@ -1,3 +1,4 @@
+<p>
 <%= form_for @note do |f| %>
   <%= f.submit :Update %>
   <p></p>
@@ -7,3 +8,4 @@
   <%= f.text_area :body, id: "text-input", oninput: "this.editor.update()", rows: "6", cols: "60" %>
   <br>
 <% end %>
+</p>

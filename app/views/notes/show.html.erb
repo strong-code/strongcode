@@ -1,6 +1,7 @@
 <p>
   <h3><%= @note.title %></h3>  
   <%= button_to 'Delete', @note, method: :delete, data: {confirm: 'Are you sure?'} %>
+  <%= button_to 'Edit', edit_note_path(@note), method: :get %>
 </p>
 
 <textarea id="text-input" oninput="this.editor.update()" style="display: none;">
