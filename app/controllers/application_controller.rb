@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
           @user = User.where(api_key: token).first
       end
     end
-    
+
     redirect_to root_path if @user.nil?
   end
 end
