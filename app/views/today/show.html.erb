@@ -1,22 +1,18 @@
-<code>
-  <p>
-    <%= Time.now.strftime('%A, %B %d, %Y') %>
-  </p>
-  <p>
-    <% unless @weight.nil? %>
-      <%= @weight %>lb
-    <% end %>
-  </p>
-</code>
 
+<p>
+  <%= Time.now.strftime('%A, %B %d, %Y') %>
+</p>
+<p>
+  <% unless @weight.nil? %>
+    <%= @weight %>lb
+  <% end %>
+</p>
 
 <h3>thoughts</h3>
 
 <p>
   <% @jes.each do |je| %>
-    <code>
-      <%= je.text %>
-    </code>
+    <%= je.text %>
     <br>
   <% end %>
 </p>
