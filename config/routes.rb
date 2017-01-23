@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   get 'today', to: 'today#show'
   get 'health', to: 'health#index'
+  get '8760', to: 'year_review#index'
 
   resources :journal_entries
   resource :media, only: [:create, :destroy]
