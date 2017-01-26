@@ -21,7 +21,8 @@ body {
   font-weight: 300;
   line-height: 1.6em;
   font-size: 17px;
-  background-color: #fcfcfc;
+  background-color: #fafafa;
+  color: #545454;
 }
 
 .edit_note {
