@@ -26,12 +26,10 @@ body {
 }
 
 .edit_note {
-  font-family: "Courier New", Courier, monospace;
   float: left;
 }
 
 #text-input, #preview {
-  font-family: "Courier New", Courier, monospace;
   width: 600px;
   height: 800px;
   border: 1px solid black;
