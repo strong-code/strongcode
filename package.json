@@ -1,0 +1,24 @@
+{
+  "name": "strongcode",
+  "version": "1.0.0",
+  "description": "The best website on the internet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strong-code/strongcode.git"
+  },
+  "author": "",
+  "license": "GPL-2.0-only",
+  "bugs": {
+    "url": "https://github.com/strong-code/strongcode/issues"
+  },
+  "homepage": "https://github.com/strong-code/strongcode#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4",
+    "vhost": "^3.0.2"
+  }
+}

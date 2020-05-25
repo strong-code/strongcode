@@ -24,3 +24,6 @@ public/media/**
 
 # Compiled assets
 public/assets/**
+
+# Vim swap files
+*.swp
