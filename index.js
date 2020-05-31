@@ -16,7 +16,7 @@ app.post('/paste', upload.single('file'), (req, res) => {
 })
 
 app.delete('/paste/:key', (req, res) => {
-  // delete
+  return paste.handleDelete(req, res)
 })
 
 app.get('/', (req, res) => {
