@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const config = require('./config.js').init(process.argv[2])
+const port = config.port
 const paste = require('./lib/pasteHandler.js')
 
 // Multer middleware for form uploads
