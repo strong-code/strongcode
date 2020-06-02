@@ -1,6 +1,7 @@
 const config = require('./config.js').init(process.argv[2])
 const express = require('express')
 const app = express()
+app.set('view engine', 'pug')
 
 // Handler modules
 const paste = require('./lib/pasteHandler.js')
@@ -23,7 +24,10 @@ app.get('/', (req, res) => {
 })
 
 app.get('/pastes', (req, res) => {
-  // gallery view
+  paste.gallery(req, res)
+  .then(data => {
+    res.render('gallery', { pastes: data })
+  })
 })
 
 /*
