@@ -1,29 +1,46 @@
+const config = require('./config.js').init(process.argv[2])
 const express = require('express')
 const app = express()
-const config = require('./config.js').init(process.argv[2])
-const port = config.port
+
+// Handler modules
 const paste = require('./lib/pasteHandler.js')
 
 // Multer middleware for form uploads
+// TODO: get from config
 const m = require('multer')
 const storage = m.memoryStorage()
 const upload = m({ storage: storage })
 
-// Statically host pastes in /d
+// Statically hosted directories
+// TODO: get from config
 app.use('/d', express.static('d'))
 
-app.post('/paste', upload.single('file'), (req, res) => {
-  return paste.handleUpload(req, res)
-})
-
-app.delete('/paste/:key', (req, res) => {
-  return paste.handleDelete(req, res)
-})
-
+/*
+  WEB ROUTES
+*/
 app.get('/', (req, res) => {
   res.send(req.hostname)
 })
 
-app.listen(port, () => {
-  console.log(`App started on port ${port}`)
+app.get('/pastes', (req, res) => {
+  // gallery view
+})
+
+/*
+  API ROUTES
+*/
+app.post('/api/paste', upload.single('file'), (req, res) => {
+  return paste.handleUpload(req, res)
+})
+
+app.delete('/api/paste/:key', (req, res) => {
+  return paste.handleDelete(req, res)
+})
+
+app.get('/api/pastes', (req, res) => {
+  return paste.gallery(req, res)
+})
+
+app.listen(config.port, () => {
+  console.log(`App started on port ${config.port}`)
 })
