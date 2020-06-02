@@ -3,3 +3,4 @@ To add:
 - gallery for pastes
 - [health dashboard](https://github.com/afaqurk/linux-dash)
 - merge startpage into this repo
+- syntax hilighting for pastes
