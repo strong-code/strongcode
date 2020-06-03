@@ -23,26 +23,35 @@ app.get('/', (req, res) => {
   res.send(req.hostname)
 })
 
-app.get('/pastes', (req, res) => {
-  paste.gallery(req, res)
-  .then(data => {
-    res.render('gallery', { pastes: data })
+app.post('/api/paste', upload.single('file'), (req, res) => {
+  paste.handleUpload(req.file)
+  .then(path => {
+    let fp = req.headers.host + '/' + path
+    res.status(200).send({ path: fp })
+  })
+  .catch(e => {
+    res.status(500).send({ error: e })
   })
 })
 
-/*
-  API ROUTES
-*/
-app.post('/api/paste', upload.single('file'), (req, res) => {
-  return paste.handleUpload(req, res)
-})
-
 app.delete('/api/paste/:key', (req, res) => {
-  return paste.handleDelete(req, res)
+  paste.handleDelete(req.params.key)
+  .then(data => {
+    res.status(200).send({ deleted: true, key: req.params.key })
+  })
+  .catch(e => {
+    res.status(500).send({ error: e })
+  })
 })
 
 app.get('/api/pastes', (req, res) => {
-  return paste.gallery(req, res)
+  paste.gallery(req.params.limit)
+  .then(data => {
+    res.status(200).send({ pastes: data })
+  })
+  .catch(e => {
+    res.status(500).send({ error: e })
+  })
 })
 
 app.listen(config.port, () => {
