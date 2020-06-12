@@ -1,7 +1,7 @@
 const config = require('./config.js').init(process.argv[2])
 const express = require('express')
+const bodyParser = require('body-parser')
 const app = express()
-app.set('view engine', 'pug')
 
 // Handler modules
 const paste = require('./lib/pasteHandler.js')
@@ -15,6 +15,8 @@ const upload = m({ storage: storage })
 // Statically hosted directories
 // TODO: get from config
 app.use('/d', express.static('d'))
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 /*
   WEB ROUTES
@@ -23,15 +25,25 @@ app.get('/', (req, res) => {
   res.send(req.hostname)
 })
 
+
 app.post('/api/paste', upload.single('file'), (req, res) => {
-  paste.handleUpload(req.file)
-  .then(path => {
-    let fp = req.headers.host + '/' + path
-    res.status(200).send({ path: fp })
-  })
-  .catch(e => {
-    res.status(500).send({ error: e })
-  })
+  if (!req.file && req.body) {
+    paste.saveText(req.body)
+    .then(path => {
+      console.log('path is '+ path)
+      let fp = req.headers.host + '/' + path
+      res.status(200).send({ path: fp })
+    })
+  } else {
+    paste.handleUpload(req.file)
+    .then(path => {
+      let fp = req.headers.host + '/' + path
+      res.status(200).send({ path: fp })
+    })
+    .catch(e => {
+      res.status(500).send({ error: e })
+    })
+  }
 })
 
 app.delete('/api/paste/:key', (req, res) => {
