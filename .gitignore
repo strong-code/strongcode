@@ -30,3 +30,4 @@ public/assets/**
 
 package-lock.json
 d/*
+node_modules/
