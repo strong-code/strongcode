@@ -30,23 +30,21 @@ app.get('/api/health', (req, res) => {
 })
 
 app.post('/api/paste', upload.single('file'), (req, res) => {
+  let save
+
   if (!req.file && req.body) {
-    paste.saveText(req.body.text)
-    .then(path => {
-      let fp = req.headers.host + '/' + path
-      res.status(200).send({ path: fp })
-    })
+    save = paste.saveText(req.body.text)
   } else {
-    console.log(req.file)
-    paste.saveFile(req.file)
-    .then(path => {
-      let fp = req.headers.host + '/' + path
-      res.status(200).send({ path: fp })
-    })
-    .catch(e => {
-      res.status(500).send({ error: e })
-    })
+    save = paste.saveFile(req.file)
   }
+  
+  return save.then(path => {
+    let fp = `${req.protocol}://${req.headers.host}/${path}`
+    res.status(200).send({ path: fp })
+  })
+  .catch(e => {
+    res.status(500).send({ error: e })
+  })
 })
 
 app.delete('/api/paste/:key', (req, res) => {
