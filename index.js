@@ -25,12 +25,14 @@ app.get('/', (req, res) => {
   res.send(req.hostname)
 })
 
+app.get('/api/health', (req, res) => {
+  res.status(200).send('OK')
+})
 
 app.post('/api/paste', upload.single('file'), (req, res) => {
   if (!req.file && req.body) {
     paste.saveText(req.body.text)
     .then(path => {
-      console.log('path is '+ path)
       let fp = req.headers.host + '/' + path
       res.status(200).send({ path: fp })
     })
