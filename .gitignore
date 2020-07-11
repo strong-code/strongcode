@@ -24,3 +24,10 @@ public/media/**
 
 # Compiled assets
 public/assets/**
+
+# Vim swap files
+*.swp
+
+package-lock.json
+d/*
+node_modules/
