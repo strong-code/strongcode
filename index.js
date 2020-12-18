@@ -67,6 +67,7 @@ app.get('/api/pastes', (req, res) => {
   })
 })
 
-app.listen(config.port, () => {
+app.listen(config.port, 'localhost', () => {
   console.log(`App started on port ${config.port}`)
 })
+
