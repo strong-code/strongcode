@@ -26,7 +26,13 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/health', (req, res) => {
-  res.status(200).send('OK')
+  paste.folderSize()
+  .then(size => {
+    res.status(200).send({ folderSize: size })
+  })
+  .catch(e => {
+    res.status(500).send({ error: e })
+  })
 })
 
 app.post('/api/paste', upload.single('file'), (req, res) => {
