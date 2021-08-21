@@ -18,6 +18,9 @@ app.use('/d', express.static('d'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
+// Use CORS middleware in dev environment, empty next() call in prod
+app.use(config.cors)
+
 /*
   WEB ROUTES
 */
@@ -26,9 +29,10 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/health', (req, res) => {
-  paste.folderSize()
-  .then(size => {
-    res.status(200).send({ folderSize: size })
+  paste.stats()
+  .then(v => {
+    const data = Object.assign(...v)
+    res.status(200).send(data)
   })
   .catch(e => {
     res.status(500).send({ error: e })

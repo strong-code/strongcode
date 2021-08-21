@@ -1,12 +1,19 @@
 const config = {
   development: {
     port: 3000,
-    host: 'localhost'
+    host: 'localhost',
+    cors: function(req, res, next) {
+      res.header("Access-Control-Allow-Origin", "*")
+      next()
+    }
   },
 
   production: {
     port: 3000,
-    host: 'strongco.de'
+    host: 'strongco.de',
+    cors: function(req, res, next) {
+      next()
+    }
   }
 }
 
