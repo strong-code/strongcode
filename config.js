@@ -5,6 +5,15 @@ const config = {
     cors: function(req, res, next) {
       res.header("Access-Control-Allow-Origin", "*")
       next()
+    },
+    db: {
+      user: 'strongcode',
+      database: 'strongcode-dev',
+      password: 'strongcode',
+      host: 'localhost',
+      port: 5432,
+      max: 10,
+      idleTimeoutMillis: 30000
     }
   },
 
@@ -13,7 +22,8 @@ const config = {
     host: 'strongco.de',
     cors: function(req, res, next) {
       next()
-    }
+    },
+    db: require('./secrets.js').db
   }
 }
 
@@ -28,5 +38,6 @@ exports.init = (env) => {
     env = 'development'
   }
 
+  console.log(`Starting server in ${env} environment`)
   return config[env]
 }

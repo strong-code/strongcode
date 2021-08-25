@@ -5,6 +5,7 @@ const app = express()
 
 // Handler modules
 const paste = require('./lib/pasteHandler.js')
+const url = require('./lib/urlHandler.js')
 
 // Multer middleware for form uploads
 // TODO: get from config
@@ -21,9 +22,6 @@ app.use(bodyParser.json())
 // Use CORS middleware in dev environment, empty next() call in prod
 app.use(config.cors)
 
-/*
-  WEB ROUTES
-*/
 app.get('/', (req, res) => {
   res.send(req.hostname)
 })
@@ -39,6 +37,9 @@ app.get('/api/health', (req, res) => {
   })
 })
 
+/*
+ PASTE ROUTES
+*/
 app.post('/api/paste', upload.single('file'), (req, res) => {
   let save
 
@@ -71,6 +72,29 @@ app.get('/api/pastes', (req, res) => {
   paste.gallery(req.params.limit)
   .then(data => {
     res.status(200).send({ pastes: data })
+  })
+  .catch(e => {
+    res.status(500).send({ error: e })
+  })
+})
+
+/*
+ SHORTENING ROUTES
+*/
+app.post('/api/shorten', (req, res) => {
+  url.shorten(req.body.urls)
+  .then(data => {
+    res.status(200).send({ urls: data })
+  })
+  .catch(e => {
+    res.status(500).send({ error: e })
+  })
+})
+
+app.get('/u/:key', (req, res) => {
+  url.findByKey(req.params.key)
+  .then(data => {
+    res.status(301).redirect(data.long_url)
   })
   .catch(e => {
     res.status(500).send({ error: e })
