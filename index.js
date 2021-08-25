@@ -82,9 +82,9 @@ app.get('/api/pastes', (req, res) => {
  SHORTENING ROUTES
 */
 app.post('/api/shorten', (req, res) => {
-  url.shorten(req.body.urls)
-  .then(data => {
-    res.status(200).send({ urls: data })
+  url.shorten(req.body.url)
+  .then(key => {
+    res.status(200).send({ url: `${config.host}/u/${key}` })
   })
   .catch(e => {
     res.status(500).send({ error: e })
