@@ -22,6 +22,9 @@ app.use(bodyParser.json())
 // Use CORS middleware in dev environment, empty next() call in prod
 app.use(config.cors)
 
+/*
+ MISC ROUTES
+*/
 app.get('/', (req, res) => {
   res.send(req.hostname)
 })
@@ -35,6 +38,11 @@ app.get('/api/health', (req, res) => {
   .catch(e => {
     res.status(500).send({ error: e })
   })
+})
+
+app.get('/ip', (req, res) => {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  res.status(200).send(ip)
 })
 
 /*
