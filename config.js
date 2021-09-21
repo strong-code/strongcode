@@ -19,7 +19,7 @@ const config = {
 
   production: {
     port: 3000,
-    host: 'http://strongco.de',
+    host: 'https://strongco.de',
     cors: function(req, res, next) {
       next()
     },
