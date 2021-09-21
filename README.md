@@ -25,4 +25,4 @@ A url shortening service
 |Method|Route|Response|Description|
 |---|---|---|---|
 |GET|/u/:key|301 redirect|Redirects a user to the corresponding long url of the provided key|
-|POST|/api/shorten|`{"url: "http://strongco.de/u/e4eb8d"}`|Creates a shortened 301 redirect link for the corresponding long url and returns the short url|
+|POST|/api/shorten|`{"url: "https://strongco.de/u/e4eb8d"}`|Creates a shortened 301 redirect link for the corresponding long url and returns the short url|
