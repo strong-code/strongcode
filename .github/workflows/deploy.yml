@@ -1,0 +1,15 @@
+name: Deploy backend API
+
+on: [push]
+
+jobs:
+  deploy:
+    name: Pull latest changes and restart server 
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Checkout latest master
+        uses: actions/checkout@v2
+      # Service file takes care of `npm install`
+      - name: Restart systemd service
+        run: |
+          sudo systemctl restart strongcode.service
