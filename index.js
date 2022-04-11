@@ -109,6 +109,13 @@ app.get('/u/:key', (req, res) => {
   })
 })
 
+/*
+ 404 CATCH-ALL
+*/
+app.get('*', (req, res) => {
+  res.status(404).send("(○´ ― `)ゞ I couldn't find that resource...")
+})
+
 app.listen(config.port, 'localhost', () => {
   console.log(`App started on port ${config.port}`)
 })
