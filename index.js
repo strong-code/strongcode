@@ -77,7 +77,7 @@ app.delete('/api/paste/:key', (req, res) => {
 })
 
 app.get('/api/pastes', (req, res) => {
-  paste.gallery(req.params.limit)
+  paste.gallery(req.query.limit, req.query.batch)
   .then(data => {
     res.status(200).send({ pastes: data })
   })
