@@ -58,7 +58,8 @@ app.post('/api/paste', upload.single('file'), (req, res) => {
   }
   
   return save.then(path => {
-    let fp = `${req.protocol}://${req.headers.host}/${path}`
+    // let fp = `${req.protocol}://${req.headers.host}/${path}`
+    let fp = `${config.host}/${path}`
     res.status(200).send({ path: fp })
   })
   .catch(e => {
