@@ -106,7 +106,11 @@ app.get('/u/:key', (req, res) => {
     res.status(301).redirect(data.long_url)
   })
   .catch(e => {
-    res.status(500).send({ error: e })
+    if (e.name == "QueryResultError") {
+      res.status(404).send("(○´ ― `)ゞ I couldn't find that URL...")
+    } else {
+      res.status(500).send({ error: e })
+    }
   })
 })
 
