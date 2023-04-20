@@ -16,8 +16,8 @@ const upload = m({ storage: storage })
 // Statically hosted directories
 // TODO: get from config
 app.use('/d', express.static('d'))
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true, limit: '2mb' }))
+app.use(bodyParser.json({ limit: '2mb' }))
 
 // Use CORS middleware in dev environment, empty next() call in prod
 app.use(config.cors)
@@ -51,14 +51,14 @@ app.get('/ip', (req, res) => {
 app.post('/api/paste', upload.single('file'), (req, res) => {
   let save
 
-  if (!req.file && req.body) {
-    save = paste.saveText(req.body.text)
+  if (req.file || req.body.file) {
+    const file = req.file || req.body.file
+    save = paste.saveFile(file)
   } else {
-    save = paste.saveFile(req.file)
+    save = paste.saveText(req.body.text)
   }
   
   return save.then(path => {
-    // let fp = `${req.protocol}://${req.headers.host}/${path}`
     let fp = `${config.host}/${path}`
     res.status(200).send({ path: fp })
   })
