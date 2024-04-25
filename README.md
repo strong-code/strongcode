@@ -25,4 +25,13 @@ A url shortening service
 |Method|Route|Response|Description|
 |---|---|---|---|
 |GET|/u/:key|301 redirect|Redirects a user to the corresponding long url of the provided key|
-|POST|/api/shorten|`{"url: "https://strongco.de/u/e4eb8d"}`|Creates a shortened 301 redirect link for the corresponding long url and returns the short url|
+|POST|/api/shorten|`{"url": "https://strongco.de/u/e4eb8d"}`|Creates a shortened 301 redirect link for the corresponding long url and returns the short url|
+
+## Package Tracking
+Track and get status updates for packages
+
+|Method|Route|Response|Description|
+|---|---|---|---|
+|POST|/api/track/new|`200` Shipment <tracking number> (carrier) successfully added to tracking|Creates a shipment tracking entry with Shippo API
+|POST|/api/track|`200`|Webhook endpoint to collect and collate Shippo tracking status updates
+|GET|/api/track/:tracking_number|`{"data":"tracking status updates..."}`|Retrieve latest (or all with `?all=true`) tracking status for a specified tracking number
