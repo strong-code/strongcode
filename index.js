@@ -1,11 +1,14 @@
 const config = require('./config.js').init(process.argv[2])
+const secrets = require('./secrets.js')
 const express = require('express')
+const request = require('request')
 const bodyParser = require('body-parser')
 const app = express()
 
 // Handler modules
 const paste = require('./lib/pasteHandler.js')
 const url = require('./lib/urlHandler.js')
+const shipment = require('./lib/shipmentHandler.js')
 
 // Multer middleware for form uploads
 // TODO: get from config
@@ -112,6 +115,77 @@ app.get('/u/:key', (req, res) => {
       res.status(500).send({ error: e })
     }
   })
+})
+
+/*
+ TRACKING ROUTES
+*/
+app.post('/api/track/new', (req, res) => {
+  request({
+    url: 'https://api.goshippo.com/tracks/',
+    body: { 'tracking_number': req.body.tracking_number, 'carrier': req.body.carrier },
+    method: 'POST',
+    json: true,
+    headers: { 'Content-Type': 'application/json', 'Authorization': secrets.shippo.prod_token }
+  }, (err, res) => {
+    if (err) {
+      console.log(err)
+      return res.status(500).send('Error creating shippo tracking entry')
+    }
+  })
+
+  res.status(200).send(`Shipment ${req.body.tracking_number} (${req.body.carrier}) successfully added to tracking`)
+})
+
+app.post('/api/track', (req, res) => {
+  const data = req.body['data']
+  const carrier = data['carrier']
+  const number = data['tracking_number']
+  const eta = data['eta']
+  const trackStatus = data['tracking_status']['status_details']
+  const updated_at = data['tracking_status']['status_date']
+
+  const payload = {
+    tracking_number: number,
+    carrier: carrier,
+    eta: eta,
+    updated_at: updated_at,
+    status: trackStatus
+  }
+
+  shipment.createOrUpdate(payload)
+  .then(data => {
+    res.status(200).send('ok')
+  })
+  .catch(e => {
+    console.log(e)
+    res.status(500).send({ error: e })
+  })
+})
+
+// add ?all=true for full tracking status
+app.get('/api/track/:tracking_number', (req, res) => {
+  const getAll = req.query.all
+
+  if (getAll) {
+    shipment.getFullStatus(req.params.tracking_number)
+    .then(data => {
+      res.status(200).send({ data: data} )
+    })
+    .catch(e => {
+      console.log(e)
+      res.status(404).send(e.message)
+    })
+  } else {
+    shipment.getLatestStatus(req.params.tracking_number)
+    .then(data => {
+      res.status(200).send({ data: data })
+    })
+    .catch(e => {
+      console.log(e)
+      res.status(404).send(e.message)
+    })
+  }
 })
 
 /*

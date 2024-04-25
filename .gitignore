@@ -15,7 +15,7 @@
 /log/*
 !/log/.keep
 /tmp
-./log.txt
+log.txt
 
 # Prod ENV loader
 .env.production
