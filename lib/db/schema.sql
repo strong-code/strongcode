@@ -13,5 +13,6 @@ CREATE TABLE IF NOT EXISTS shipments (
   carrier VARCHAR NOT NULL,
   eta TIMESTAMP,
   updated_at TIMESTAMP NOT NULL,
-  status TEXT NOT NULL
+  status TEXT NOT NULL,
+  origin TEXT NOT NULL
 );
