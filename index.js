@@ -120,21 +120,28 @@ app.get('/u/:key', (req, res) => {
 /*
  TRACKING ROUTES
 */
-app.post('/api/track/new', (req, res) => {
-  request({
-    url: 'https://api.goshippo.com/tracks/',
-    body: { 'tracking_number': req.body.tracking_number, 'carrier': req.body.carrier },
-    method: 'POST',
-    json: true,
-    headers: { 'Content-Type': 'application/json', 'Authorization': secrets.shippo.prod_token }
-  }, (err, res) => {
-    if (err) {
-      console.log(err)
-      return res.status(500).send('Error creating shippo tracking entry')
-    }
+app.post('/api/track/new', async (req, res) => {
+  const trackingResult = await new Promise((resolve, reject) => {
+    request({
+      url: 'https://api.goshippo.com/tracks/',
+      body: { 'tracking_number': req.body.tracking_number, 'carrier': req.body.carrier },
+      method: 'POST',
+      json: true,
+      headers: { 'Content-Type': 'application/json', 'Authorization': secrets.shippo.prod_token }
+    }, async (err, res, body) => {
+      if (err) {
+        console.log('error:', err)
+        reject({status: 500, message: 'Error creating Shippo tracking entry'})
+      } else if (res.statusCode === 200 && !body.tracking_status && body.tracking_history.length === 0) {
+        body.updated_at = new Date().toISOString()
+        body.status = 'preship'
+        body.origin = body.address_from.city + ', ' + body.address_from.state
+        resolve(await shipment.createOrUpdate(body))
+      }
+    })
   })
 
-  res.status(200).send(`Shipment ${req.body.tracking_number} (${req.body.carrier}) successfully added to tracking`)
+  res.status(trackingResult.status).send(trackingResult.message)
 })
 
 app.post('/api/track', (req, res) => {
@@ -150,7 +157,8 @@ app.post('/api/track', (req, res) => {
     carrier: carrier,
     eta: eta,
     updated_at: updated_at,
-    status: trackStatus
+    status: trackStatus,
+    origin: data['address_from']['city'] + ', ' + data['address_from']['state']
   }
 
   shipment.createOrUpdate(payload)
