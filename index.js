@@ -121,7 +121,7 @@ app.get('/u/:key', (req, res) => {
  TRACKING ROUTES
 */
 app.post('/api/track/new', async (req, res) => {
-  const trackingResult = await new Promise((resolve, reject) => {
+  const shippoResult = await new Promise((resolve, reject) => {
     request({
       url: 'https://api.goshippo.com/tracks/',
       body: { 'tracking_number': req.body.tracking_number, 'carrier': req.body.carrier },
@@ -132,42 +132,54 @@ app.post('/api/track/new', async (req, res) => {
       if (err) {
         console.log('error:', err)
         reject({status: 500, message: 'Error creating Shippo tracking entry'})
-      } else if (res.statusCode === 200 && !body.tracking_status && body.tracking_history.length === 0) {
-        body.updated_at = new Date().toISOString()
-        body.status = 'preship'
+      } else {
         body.origin = body.address_from.city + ', ' + body.address_from.state
-        resolve(await shipment.createOrUpdate(body))
+        const creationResponse = await shipment.createShipment(body)
+        resolve(creationResponse)
       }
     })
   })
 
-  res.status(trackingResult.status).send(trackingResult.message)
+  const trackRes = await shippoResult
+  res.status(trackRes.status).send(trackRes.message)
 })
 
 app.post('/api/track', (req, res) => {
-  const data = req.body['data']
-  const carrier = data['carrier']
-  const number = data['tracking_number']
-  const eta = data['eta']
-  const trackStatus = data['tracking_status']['status_details']
-  const updated_at = data['tracking_status']['status_date']
+  const data = req.body['data']['tracking_status']
+  const tracking_number = req.body['data']['tracking_number']
 
-  const payload = {
-    tracking_number: number,
-    carrier: carrier,
-    eta: eta,
-    updated_at: updated_at,
-    status: trackStatus,
-    origin: data['address_from']['city'] + ', ' + data['address_from']['state']
+  if (data['status'] === 'DELIVERED') {
+    shipment.markDelivered(tracking_number)
+    .then(() => {
+      res.status(200).send('DELIVERED')
+    })
+    return
   }
 
-  shipment.createOrUpdate(payload)
+  const payload = {
+    tracking_number: tracking_number,
+    status: data['status_details'],
+    location: data['location']['city'] + ', ' + data['location']['state'],
+    updated_at: new Date().toISOString()
+  }
+
+  shipment.updateStatus(payload)
   .then(data => {
     res.status(200).send('ok')
   })
   .catch(e => {
     console.log(e)
     res.status(500).send({ error: e })
+  })
+})
+
+app.get('/api/track/active', (req, res) => {
+  shipment.getAllActive()
+  .then(shipments => {
+    res.status(200).send(shipments)
+  })
+  .catch(e => {
+    res.status(500).send(e)
   })
 })
 

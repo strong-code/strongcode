@@ -8,11 +8,18 @@ CREATE TABLE IF NOT EXISTS urls (
 );
 
 CREATE TABLE IF NOT EXISTS shipments (
-  id SERIAL UNIQUE PRIMARY KEY,
-  tracking_number VARCHAR NOT NULL,
+  tracking_number VARCHAR UNIQUE PRIMARY KEY,
   carrier VARCHAR NOT NULL,
+  origin TEXT NOT NULL,
   eta TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL,
+  item TEXT,
+  delivered BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS shipment_status (
+  id SERIAL UNIQUE PRIMARY KEY,
+  tracking_number VARCHAR REFERENCES shipments(tracking_number),
   status TEXT NOT NULL,
-  origin TEXT NOT NULL
+  location TEXT NOT NULL,
+  updated_at TIMESTAMP NOT NULL
 );
