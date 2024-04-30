@@ -128,12 +128,12 @@ app.post('/api/track/new', async (req, res) => {
       method: 'POST',
       json: true,
       headers: { 'Content-Type': 'application/json', 'Authorization': secrets.shippo.prod_token }
-    }, async (err, res, body) => {
+    }, async (err, result, body) => {
       if (err) {
         console.log('error:', err)
         reject({status: 500, message: 'Error creating Shippo tracking entry'})
       } else {
-        body.origin = body.address_from.city + ', ' + body.address_from.state
+        body.origin = (body.address_from ? body.address_from.city + ', ' + body.address_from.state : 'Unknown')
         const creationResponse = await shipment.createShipment(body)
         resolve(creationResponse)
       }
@@ -141,17 +141,25 @@ app.post('/api/track/new', async (req, res) => {
   })
 
   const trackRes = await shippoResult
-  res.status(trackRes.status).send(trackRes.message)
+  return res.status(trackRes.status).send(trackRes.message)
 })
 
 app.post('/api/track', (req, res) => {
+  console.log('Received event from webhook, updating status...')
+
   const data = req.body['data']['tracking_status']
   const tracking_number = req.body['data']['tracking_number']
 
   if (data['status'] === 'DELIVERED') {
+    console.log(`Marking ${tracking_number} as delivered`)
+
     shipment.markDelivered(tracking_number)
     .then(() => {
       res.status(200).send('DELIVERED')
+    })
+    .catch(e => {
+      console.log(e)
+      res.status(500).send(e)
     })
     return
   }
