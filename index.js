@@ -1,5 +1,4 @@
 const config = require('./config.js').init(process.argv[2])
-const secrets = require('./secrets.js')
 const express = require('express')
 const request = require('request')
 const bodyParser = require('body-parser')
@@ -121,27 +120,13 @@ app.get('/u/:key', (req, res) => {
  TRACKING ROUTES
 */
 app.post('/api/track/new', async (req, res) => {
-  const shippoResult = await new Promise((resolve, reject) => {
-    request({
-      url: 'https://api.goshippo.com/tracks/',
-      body: { 'tracking_number': req.body.tracking_number, 'carrier': req.body.carrier },
-      method: 'POST',
-      json: true,
-      headers: { 'Content-Type': 'application/json', 'Authorization': secrets.shippo.prod_token }
-    }, async (err, result, body) => {
-      if (err) {
-        console.log('error:', err)
-        reject({status: 500, message: 'Error creating Shippo tracking entry'})
-      } else {
-        body.origin = (body.address_from ? body.address_from.city + ', ' + body.address_from.state : 'Unknown')
-        const creationResponse = await shipment.createShipment(body)
-        resolve(creationResponse)
-      }
-    })
-  })
-
-  const trackRes = await shippoResult
-  return res.status(trackRes.status).send(trackRes.message)
+  try {
+    const body = await shipment.postShippoTrack(req.body.tracking_number, req.body.carrier)
+    const { s, msg } = await shipment.createShipment(body)
+    return res.status(s).send(msg)
+  } catch (err) {
+    return res.status(500).send('Error creating Shippo tracking entry')
+  }
 })
 
 app.post('/api/track', (req, res) => {
