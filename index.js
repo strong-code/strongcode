@@ -130,10 +130,10 @@ app.post('/api/track/new', async (req, res) => {
 })
 
 app.post('/api/track', (req, res) => {
-  console.log('Received event from webhook, updating status...')
-
   const data = req.body['data']['tracking_status']
   const tracking_number = req.body['data']['tracking_number']
+
+  console.log(`Received event from webhook for ${tracking_number}: ${data['status_details']}`)
 
   if (data['status'] === 'DELIVERED') {
     console.log(`Marking ${tracking_number} as delivered`)
@@ -167,7 +167,7 @@ app.post('/api/track', (req, res) => {
 })
 
 app.get('/api/track/active', (req, res) => {
-  shipment.getAllActive()
+  return shipment.getAllActive()
   .then(shipments => {
     res.status(200).send(shipments)
   })
