@@ -196,7 +196,7 @@ app.get('/api/track/:tracking_number', (req, res) => {
     })
     .catch(e => {
       console.log(e)
-      res.status(404).send(e.message)
+      res.status(404).send(`Error: ${e.message} (tracking number "${req.params.tracking_number}")`)
     })
   }
 })
