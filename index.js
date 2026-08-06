@@ -120,16 +120,29 @@ app.get('/u/:key', (req, res) => {
  TRACKING ROUTES
 */
 app.post('/api/track/new', async (req, res) => {
+  if (!req.body.tracking_number || !req.body.carrier) {
+    return res.status(400).send({ error: 'tracking_number and carrier are required' })
+  }
+
   try {
     const body = await shipment.postShippoTrack(req.body.tracking_number, req.body.carrier)
-    const { s, msg } = await shipment.createShipment(body)
-    return res.status(s).send(msg)
+    const { s, msg, data } = await shipment.createShipment(body, req.body.item)
+
+    if (s === 201) {
+      return res.status(s).send({ msg: msg, shipment: data })
+    }
+
+    return res.status(s).send({ error: msg })
   } catch (err) {
-    return res.status(500).send('Error creating Shippo tracking entry')
+    return res.status(500).send({ error: 'Error creating Shippo tracking entry' })
   }
 })
 
 app.post('/api/track', (req, res) => {
+  if (!req.body.data || !req.body.data.tracking_status) {
+    return res.status(400).send({ error: 'Malformed webhook payload' })
+  }
+
   const data = req.body['data']['tracking_status']
   const tracking_number = req.body['data']['tracking_number']
 
@@ -149,10 +162,11 @@ app.post('/api/track', (req, res) => {
     return
   }
 
+  const loc = data['location']
   const payload = {
     tracking_number: tracking_number,
     status: data['status_details'],
-    location: data['location']['city'] + ', ' + data['location']['state'],
+    location: (loc && loc.city ? loc.city + ', ' + loc.state : 'Unknown'),
     updated_at: new Date().toISOString()
   }
 
@@ -201,12 +215,58 @@ app.get('/api/track/:tracking_number', (req, res) => {
   }
 })
 
+app.patch('/api/track/:tracking_number', async (req, res) => {
+  const tn = req.params.tracking_number
+  const { item, archived } = req.body
+
+  if (item === undefined && archived === undefined) {
+    return res.status(400).send({ error: 'Nothing to update. Provide item and/or archived' })
+  }
+
+  try {
+    let ok = true
+
+    if (item !== undefined) {
+      ok = await shipment.setItem(tn, item)
+    }
+    if (ok && archived !== undefined) {
+      ok = await shipment.setArchived(tn, archived === true || archived === 'true')
+    }
+
+    if (!ok) {
+      return res.status(404).send({ error: `Unable to find shipment with tracking number: ${tn}` })
+    }
+
+    return res.status(200).send({ tracking_number: tn, item: item, archived: archived })
+  } catch (e) {
+    return res.status(500).send({ error: e })
+  }
+})
+
+app.delete('/api/track/:tracking_number', (req, res) => {
+  shipment.removeShipment(req.params.tracking_number)
+  .then(ok => {
+    if (!ok) {
+      return res.status(404).send({ error: `Unable to find shipment with tracking number: ${req.params.tracking_number}` })
+    }
+    res.status(200).send({ deleted: true, tracking_number: req.params.tracking_number })
+  })
+  .catch(e => {
+    res.status(500).send({ error: e })
+  })
+})
+
 /*
  404 CATCH-ALL
 */
 app.get('*', (req, res) => {
   res.status(404).send("(○´ ― `)ゞ I couldn't find that resource...")
 })
+
+// Idempotent schema updates (no migration framework)
+const db = require('./lib/db/db.js')
+db.none('ALTER TABLE shipments ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE')
+.catch(e => console.log(`Schema update warning: ${e.message}`))
 
 app.listen(config.port, 'localhost', () => {
   console.log(`App started on port ${config.port}`)

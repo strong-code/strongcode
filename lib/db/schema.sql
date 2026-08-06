@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS shipments (
   origin TEXT NOT NULL,
   eta TIMESTAMP,
   item TEXT,
-  delivered BOOLEAN DEFAULT FALSE
+  delivered BOOLEAN DEFAULT FALSE,
+  archived BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS shipment_status (

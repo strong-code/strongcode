@@ -32,6 +32,9 @@ Track and get status updates for packages
 
 |Method|Route|Response|Description|
 |---|---|---|---|
-|POST|/api/track/new|`200` Shipment <tracking number> (carrier) successfully added to tracking|Creates a shipment tracking entry with Shippo API
+|POST|/api/track/new|`201` `{"msg":"...", "shipment":{tracking_number, carrier, item, eta, status, location, updated_at}}` / `409` `{"error":"..."}`|Creates a shipment tracking entry with Shippo API. Body: `tracking_number`, `carrier` (required), `item` (optional description). Accepts JSON or form-encoded|
 |POST|/api/track|`200`|Webhook endpoint to collect and collate Shippo tracking status updates
+|GET|/api/track/active|`[{item, status, location, updated_at, tracking_number, carrier, eta}]`|Latest status for every shipment that is not delivered or archived|
 |GET|/api/track/:tracking_number|`{"data":"tracking status updates..."}`|Retrieve latest (or all with `?all=true`) tracking status for a specified tracking number
+|PATCH|/api/track/:tracking_number|`200` / `404`|Update a shipment. Body: `item` and/or `archived` (set `archived: true` to hide it from the active list without deleting)
+|DELETE|/api/track/:tracking_number|`200` `{"deleted":true,...}` / `404`|Deletes a shipment and its status history
