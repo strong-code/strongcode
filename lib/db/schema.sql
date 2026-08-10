@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS shipments (
   eta TIMESTAMP,
   item TEXT,
   delivered BOOLEAN DEFAULT FALSE,
+  delivered_at TIMESTAMP,
   archived BOOLEAN DEFAULT FALSE
 );
 

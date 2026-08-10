@@ -266,6 +266,7 @@ app.get('*', (req, res) => {
 // Idempotent schema updates (no migration framework)
 const db = require('./lib/db/db.js')
 db.none('ALTER TABLE shipments ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE')
+db.none('ALTER TABLE shipments ADD COLUMN IF NOT EXISTS delivered_at TIMESTAMP')
 .catch(e => console.log(`Schema update warning: ${e.message}`))
 
 app.listen(config.port, 'localhost', () => {
