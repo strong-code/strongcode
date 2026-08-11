@@ -190,6 +190,17 @@ app.get('/api/track/active', (req, res) => {
   })
 })
 
+app.get('/api/track/deliveries', (req, res) => {
+  const limit = parseInt(req.query.limit, 10) || 3
+  shipment.getRecentDelivered(limit)
+  .then(deliveries => {
+    res.status(200).send({ deliveries: deliveries })
+  })
+  .catch(e => {
+    res.status(500).send(e)
+  })
+})
+
 // add ?all=true for full tracking status
 app.get('/api/track/:tracking_number', (req, res) => {
   const getAll = req.query.all
