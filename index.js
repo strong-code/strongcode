@@ -8,6 +8,7 @@ const app = express()
 const paste = require('./lib/pasteHandler.js')
 const url = require('./lib/urlHandler.js')
 const shipment = require('./lib/shipmentHandler.js')
+const futures = require('./lib/futuresHandler.js')
 
 // Multer middleware for form uploads
 // TODO: get from config
@@ -45,6 +46,20 @@ app.get('/api/health', (req, res) => {
 app.get('/ip', (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
   res.status(200).send(ip)
+})
+
+/*
+ FUTURES ROUTES
+*/
+app.get('/api/futures', (req, res) => {
+  futures.quotes()
+  .then(data => {
+    res.status(200).send({ futures: data })
+  })
+  .catch(e => {
+    console.log(`Futures fetch failed: ${e.message || e}`)
+    res.status(502).send({ error: 'Unable to fetch futures quotes' })
+  })
 })
 
 /*
