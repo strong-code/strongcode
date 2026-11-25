@@ -9,6 +9,9 @@ const paste = require('./lib/pasteHandler.js')
 const url = require('./lib/urlHandler.js')
 const shipment = require('./lib/shipmentHandler.js')
 const futures = require('./lib/futuresHandler.js')
+const { createTrackNewHandler } = require('./lib/trackNewHandler.js')
+const { ensureSchema } = require('./lib/db/migrate.js')
+const db = require('./lib/db/db.js')
 
 // Multer middleware for form uploads
 // TODO: get from config
@@ -134,24 +137,7 @@ app.get('/u/:key', (req, res) => {
 /*
  TRACKING ROUTES
 */
-app.post('/api/track/new', async (req, res) => {
-  if (!req.body.tracking_number || !req.body.carrier) {
-    return res.status(400).send({ error: 'tracking_number and carrier are required' })
-  }
-
-  try {
-    const body = await shipment.postShippoTrack(req.body.tracking_number, req.body.carrier)
-    const { s, msg, data } = await shipment.createShipment(body, req.body.item)
-
-    if (s === 201) {
-      return res.status(s).send({ msg: msg, shipment: data })
-    }
-
-    return res.status(s).send({ error: msg })
-  } catch (err) {
-    return res.status(500).send({ error: 'Error creating Shippo tracking entry' })
-  }
-})
+app.post('/api/track/new', createTrackNewHandler({ shipment }))
 
 app.post('/api/track', (req, res) => {
   if (!req.body.data || !req.body.data.tracking_status) {
@@ -289,13 +275,16 @@ app.get('*', (req, res) => {
   res.status(404).send("(○´ ― `)ゞ I couldn't find that resource...")
 })
 
-// Idempotent schema updates (no migration framework)
-const db = require('./lib/db/db.js')
-db.none('ALTER TABLE shipments ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE')
-db.none('ALTER TABLE shipments ADD COLUMN IF NOT EXISTS delivered_at TIMESTAMP')
-.catch(e => console.log(`Schema update warning: ${e.message}`))
-
-app.listen(config.port, 'localhost', () => {
-  console.log(`App started on port ${config.port}`)
+// Idempotent schema updates (no migration framework). Fail closed: the server
+// must not serve tracking requests against a half-migrated schema.
+ensureSchema(db)
+.then(() => {
+  app.listen(config.port, 'localhost', () => {
+    console.log(`App started on port ${config.port}`)
+  })
+})
+.catch(e => {
+  console.error(`Schema update failed: ${e.message}`)
+  process.exit(1)
 })
 

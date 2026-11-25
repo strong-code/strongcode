@@ -25,7 +25,11 @@ const config = {
     cors: function(req, res, next) {
       next()
     },
-    db: require('./secrets.js').db
+    // Resolve production credentials lazily so development/test runs do not
+    // require secrets.js to exist.
+    get db() {
+      return require('./secrets.js').db
+    }
   }
 }
 
