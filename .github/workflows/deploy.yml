@@ -1,6 +1,8 @@
 name: Deploy backend API
 
-on: [push]
+on:
+  push:
+    branches: [master]
 
 jobs:
   deploy:

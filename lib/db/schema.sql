@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS shipments (
   item TEXT,
   delivered BOOLEAN DEFAULT FALSE,
   delivered_at TIMESTAMP,
-  archived BOOLEAN DEFAULT FALSE
+  archived BOOLEAN DEFAULT FALSE,
+  tracking_mode TEXT NOT NULL DEFAULT 'live'
+    CHECK (tracking_mode IN ('live', 'link_only'))
 );
 
 CREATE TABLE IF NOT EXISTS shipment_status (
